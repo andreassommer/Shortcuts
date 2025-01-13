@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+# Andreas Sommer, code@andreas-sommer.eu, Jan2025
+
+# config
+DEFAULTDELIMITER="/"
+DEFAULTFILEMASK="*"
+
+# help
+usage() {
+   echo "usage: $0 (searchstr) (replacestr) (filemask) [SEDdelimiter]"
+   echo "  searchstr      string to search for"
+   echo "  replacestr     if searchstr is found, it is replaced by replacestr"
+   echo "  filemask       files to be searched, e.g. '*.m' - MUST BE QUOTED !!"
+   echo "  SEDdelimiter   delimiter sign for sed, default: $DEFAULTDELIMITER"
+   echo ""
+}
+
+# user needs help
+if [ "$#" -lt 1 ] || [ "$1" = "--help" ]; then
+   usage
+   exit 9
+fi
+
+# too many args
+if [ "$#" -gt 4 ]; then
+   echo "Too many arguments! Maybe filemask not quoted? Abort."
+   exit 9
+fi
+
+# process arguments
+SEARCHSTR="$1"
+REPLACESTR="$2"
+FILEMASK="$3"
+SEDdelim="$4"
+
+# if no file mask is given, use *
+if [ "$FILEMASK" = "" ]; then
+   FILEMASK=$DEFAULTFILEMASK
+fi
+
+# if no delimiter is given, use default
+if [ "$SEDdelim" = "" ]; then
+   SEDdelim=$DEFAULTDELIMITER
+fi
+
+# delimiter must be a single character
+if [ ${#SEDdelim} -ne 1 ]; then
+   echo "SEDdelim must be a single character. Abort."
+   exit 9
+fi
+
+# abort if delimiter is present in searchstr or replacestr
+if [[ "$SEARCHSTR" == *"$SEDdelim"* ]] || [[ "$REPLACESTR" == *"$SEDdelim"* ]]; then
+   echo "Neither searchstr nor replacestr must contain the delimiter '$SEDdelim'".
+   exit 9
+fi
+
+# assemble sed command
+SEDquery="s${SEDdelim}${SEARCHSTR}${SEDdelim}${REPLACESTR}${SEDdelim}g"
+
+SEDcommand="sed -i '$SEDquery'"
+FINDcommand="find . -type f -name '$FILEMASK' -exec $SEDcommand {} +"
+
+echo "Invoking: $FINDcommand"
+
+read -p "Are you sure you want to continue? (y/n): " answer
+case "$answer" in
+   [Yy]* ) 
+      echo "Substituting..."
+      eval "$FINDcommand"
+      ;;
+   * ) 
+      echo "Aborted."
+      exit 9
+      ;;
+esac
+
