@@ -1,0 +1,7 @@
+#!/bin/bash
+# Helps to rename a file to the same name with different capitalization
+# on file systems that are not case-sensitive
+# e.g.  ren HelloWorld.data helloworld.data
+tmpfile=$1.hubbelzupp
+mv $1 $tmpfile
+mv $tmpfile $2

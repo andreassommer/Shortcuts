@@ -1,0 +1,13 @@
+#!/bin/bash
+
+findfiledb=~/findfile.db
+
+# update database
+if [ "$1" == "--update" ]; then
+   echo Updating findfile database
+   updatedb -l 0 -U ~/source/ -o ${findfiledb}
+   exit 0
+fi
+
+# ordinary search
+locate -d ${findfiledb}  $*

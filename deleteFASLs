@@ -1,0 +1,41 @@
+#!/bin/bash
+
+echo
+echo Use argument \"withMatlisp\" for deleting Matlisp-FASLs.
+echo Use argument \"withSBCL\" for deleting SBCL-FASLs.
+echo
+echo 
+echo 
+echo Going to delete the following files:
+echo ====================================
+echo 
+
+EXCLUDEMASKMATLISP="./matlisp/*"
+EXCLUDEMASKSBCL="./sbcl/*"
+
+if [ "$1" = "withMatlisp" ]; then
+   EXCLUDEMASKMATLISP=""
+fi
+
+if [ "$1" = "withSBCL" ]; then
+   EXCLUDEMASKSBCL=""
+fi
+
+
+find . -type f \( -iname "*.fasl"    -not -iwholename "$EXCLUDEMASKMATLISP"  -not -iwholename "$EXCLUDEMASKSBCL" \)  -exec echo {} \;
+find . -type f \( -iname "*.fas"     -not -iwholename "$EXCLUDEMASKMATLISP"  -not -iwholename "$EXCLUDEMASKSBCL" \)  -exec echo {} \;
+
+
+select result in "Delete listed files" "Do nothing";
+do
+   echo $result
+   if [ "$result" = "Delete listed files" ]; then
+      find . -type f \( -iname "*.fasl"   -not -iwholename "$EXCLUDEMASKMATLISP" -not -iwholename "$EXCLUDEMASKSBCL" \) -print0 | xargs -0 --no-run-if-empty rm 
+      find . -type f \( -iname "*.fas"    -not -iwholename "$EXCLUDEMASKMATLISP" -not -iwholename "$EXCLUDEMASKSBCL" \) -print0 | xargs -0 --no-run-if-empty rm 
+   fi
+   break;
+done
+
+
+
+

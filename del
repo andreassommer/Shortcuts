@@ -1,0 +1,13 @@
+#!/bin/bash
+mkdir -p ~/Papierkorb
+mv -f --backup=numbered "$@" ~/Papierkorb ;
+
+
+# original code for aliases in .bashrc
+#
+# Loeschbefehl del, verschiebt in ~/Papierkorb
+#del()  { mv -f --backup=numbered "$@" ~/Papierkorb ; }
+#alias delete="del"
+#
+# backup, kopiert Verzeichnis/Datei in ~/Papierkorb
+#backup() { cp -a --backup=numbered "$@" ~/Papierkorb ; }

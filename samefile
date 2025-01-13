@@ -1,0 +1,10 @@
+#!/bin/env bash
+FILE_A=$1
+FILE_B=$2
+if [ "$(stat -L -c %d:%i $FILE_A)" = "$(stat -L -c %d:%i $FILE_B)" ]; then
+  echo "$FILE_A and $FILE_B refer to a single file, with one inode, on one device."
+else
+  echo "no match"
+fi
+
+# Source: https://superuser.com/a/196655
